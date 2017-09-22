@@ -1,7 +1,8 @@
 [package]
 name = "yobot"
 version = "0.1.0"
-authors = ["Martin Conte Mac Donell <martin@lyft.com>"]
+authors = ["Stuart Nelson <stuartnelson3@gmail.com>",
+           "Martin Conte Mac Donell <martin@lyft.com>"]
 
 [dependencies]
 regex = "0.2.2"
