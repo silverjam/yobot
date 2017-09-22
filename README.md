@@ -1,14 +1,13 @@
 # yobot
-Note: This was forked by me (@stuartnelson3) for the purpose of updating and
-releasing this on crates.io. All credit goes to the original creator.
+__Note__: This was forked by me (@stuartnelson3) for the purpose of updating
+and releasing this on crates.io. All credit goes to the original creator,
+Martin Conte Mac Donell <martin@lyft.com>.
 
-Slack bot that can be extended with listeners.
-
-Yobot is an extensible slack bot. You can add listeners that define a regex in order to
+Yobot is an extensible slack bot. You can add listener that define a regex in order to
 handle real time events on a slack channel.
 
-Settting `SLACK_BOT_TOKEN` env variable and running `cargo run` will get you a bot,
-just invite the bot to the channels you want on slack and start the fun.
+You need to create a bot, then supply its api token and name when starting
+`Yobot`. Check out the examples in `examples/`
 
 ## Listeners
 
@@ -55,7 +54,7 @@ impl MessageListener for EchoListener {
     }
 
     fn handle(&self, message: &Message, cli: &slack::RtmClient) {
-        let _ = cli.send_message(&message.channel, &message.text);
+        let _ = cli.sender().send_message(&message.channel, &message.text);
     }
 }
 ```
@@ -68,9 +67,19 @@ the real time API and start listening for messages.
 ### Example
 
 ```rust
-use yobot::Yobot;
+fn main() {
+    let token = match env::var("SLACK_BOT_TOKEN") {
+        Ok(token) => token,
+        Err(_) => panic!("Failed to get SLACK_BOT_TOKEN from env"),
+    };
+    let bot_name = match env::var("SLACK_BOT_NAME") {
+        Ok(bot_name) => bot_name,
+        Err(_) => panic!("Failed to get SLACK_BOT_NAME from env"),
+    };
 
-let yobot = Yobot::new();
-yobot.add_listener(??);
-yobot.connect();
+    let listener = EchoListener::new();
+    let mut yobot = Yobot::new();
+    yobot.add_listener(listener);
+    yobot.connect(token, bot_name);
+}
 ```

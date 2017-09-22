@@ -51,7 +51,7 @@ pub struct Message {
 ///     }
 ///
 ///     fn handle(&self, message: &Message, cli: &slack::RtmClient) {
-///         let _ = cli.send_message(&message.channel, &message.text);
+///         let _ = cli.sender().send_message(&message.channel, &message.text);
 ///     }
 /// }
 /// # }
