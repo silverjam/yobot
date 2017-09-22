@@ -34,17 +34,11 @@
 //! ```
 //!
 
-#[macro_use]
-extern crate log;
 extern crate regex;
 extern crate slack;
-extern crate hyper;
-extern crate rustc_serialize;
 
 pub mod listener;
 pub mod slackhandler;
-pub mod logger;
-pub use logger::SimpleLogger;
+pub mod yobot;
 
-mod yobot;
-pub use yobot::Yobot;
+pub use self::yobot::Yobot;

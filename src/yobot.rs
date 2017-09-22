@@ -16,32 +16,29 @@
 //! ```
 extern crate slack;
 
-use listener::{Message, MessageListener};
 use slackhandler::SlackHandler;
-use std::env;
+use listener::{MessageListener, Message};
 
 pub struct Yobot {
     listeners: Vec<Box<MessageListener>>,
 }
 
 impl Yobot {
-
     /// Create a new yobot instance.
     pub fn new() -> Yobot {
-        Yobot {
-            listeners: Vec::new()
-        }
+        Yobot { listeners: Vec::new() }
     }
 
     fn handle_message(&self, message: &Message, cli: &slack::RtmClient) {
         if message.text == "help" && message.is_addressed {
-            let helps = self.listeners.iter()
+            let helps = self.listeners
+                .iter()
                 .map(|x| x.help())
                 .collect::<Vec<_>>()
                 .join("\n");
 
-            let _ = cli.send_message(&message.channel, &helps);
-            return
+            let _ = cli.sender().send_message(&message.channel, &helps);
+            return;
         }
 
         for listener in self.listeners.iter() {
@@ -54,16 +51,10 @@ impl Yobot {
 
     /// Connect slack Real Time API socket.
     ///
-    /// Once the socket is connected, messages will be directed to every listener
-    /// that matches.
-    pub fn connect(&self) {
-        let token = match env::var("SLACK_BOT_TOKEN") {
-            Ok(token) => token,
-            Err(_) => panic!("Failed to get SLACK_BOT_TOKEN from env")
-        };
-
-        let mut handler = SlackHandler::new(|message, cli| { self.handle_message(message, cli) });
-        handler.login_and_run(token);
+    /// Once the socket is connected, messages will be directed to the listener.
+    pub fn connect(&self, token: String, bot_name: String) {
+        let mut handler = SlackHandler::new(|message, cli| self.handle_message(message, cli));
+        handler.login_and_run(token, bot_name);
     }
 
     /// Add a MessageListener to the bot
@@ -71,7 +62,8 @@ impl Yobot {
     /// The more listeners you have the more useful your bot becomes (for potentially loose
     /// definitions of useful :P).
     pub fn add_listener<T>(&mut self, listener: T) -> &mut Yobot
-        where T: MessageListener + 'static
+    where
+        T: MessageListener + 'static,
     {
         self.listeners.push(Box::new(listener));
         self

@@ -2,15 +2,10 @@
 
 use regex::Captures;
 use regex::Regex;
-use slack::{User, RtmClient};
-
-pub mod echo;
-pub mod meme;
-pub mod slackbot;
-pub mod profound;
+use slack::RtmClient;
 
 pub struct Message {
-    pub user: User,
+    // pub user: User,
     pub text: String,
     pub is_addressed: bool,
     pub channel: String,

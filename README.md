@@ -1,5 +1,8 @@
 # yobot
-Slack bot that can be extended with listners.
+Note: This was forked by me (@stuartnelson3) for the purpose of updating and
+releasing this on crates.io. All credit goes to the original creator.
+
+Slack bot that can be extended with listeners.
 
 Yobot is an extensible slack bot. You can add listeners that define a regex in order to
 handle real time events on a slack channel.
