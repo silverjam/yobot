@@ -23,14 +23,21 @@
 //! # Example
 //!
 //! ```no_run
-//! # extern crate yobot;
-//! # fn main() {
-//! use yobot::Yobot;
+//! fn main() {
+//!     let token = match env::var("SLACK_BOT_TOKEN") {
+//!         Ok(token) => token,
+//!         Err(_) => panic!("Failed to get SLACK_BOT_TOKEN from env"),
+//!     };
+//!     let bot_name = match env::var("SLACK_BOT_NAME") {
+//!         Ok(bot_name) => bot_name,
+//!         Err(_) => panic!("Failed to get SLACK_BOT_NAME from env"),
+//!     };
 //!
-//! let yobot = Yobot::new();
-//! yobot.add_listener(??);
-//! yobot.connect();
-//! # }
+//!     let listener = EchoListener::new();
+//!     let mut yobot = Yobot::new();
+//!     yobot.add_listener(listener);
+//!     yobot.connect(token, bot_name);
+//! }
 //! ```
 //!
 
