@@ -51,7 +51,7 @@ where
                     .and_then(|bot| bot.id.as_ref())
                     .expect("couldn't find bot from bot name");
 
-                let addresser_regex = format!(r"^(<@{}>|{})?[:,\s]\s*", bot_id, bot_name);
+                let addresser_regex = format!(r"^(<@{}>|{}):?\s*", bot_id, bot_name);
                 self.addresser = Regex::new(&addresser_regex).unwrap();
 
                 if let Err(err) = client.run(self) {
@@ -76,6 +76,44 @@ where
         }
 
         (is_addressed, message.to_string())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use slackhandler::SlackHandler;
+    use slack::RtmClient;
+    use regex::Regex;
+    use listener::Message;
+
+    fn handle_stub(_message: &Message, _cli: &RtmClient) {}
+    #[test]
+    fn can_handle() {
+        let addresser_regex = format!(r"^(<@{}>|{}):?\s*", "12345", "testname");
+        let slack_handler = SlackHandler {
+            addresser: Regex::new(&addresser_regex).unwrap(),
+            event_handler: handle_stub,
+        };
+
+        let msg = ":tea: this should not match";
+        let expect = ":tea: this should not match".to_owned();
+
+        assert_eq!((false, expect), slack_handler.parse_message(&msg));
+
+        let msg = "testname: this matches";
+        let expect = "this matches".to_owned();
+
+        assert_eq!((true, expect), slack_handler.parse_message(&msg));
+
+        let msg = "testname this matches";
+        let expect = "this matches".to_owned();
+
+        assert_eq!((true, expect), slack_handler.parse_message(&msg));
+
+        let msg = "<@12345> this matches";
+        let expect = "this matches".to_owned();
+
+        assert_eq!((true, expect), slack_handler.parse_message(&msg));
     }
 }
 
