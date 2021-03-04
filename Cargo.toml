@@ -1,6 +1,6 @@
 [package]
 name = "yobot"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Stuart Nelson <stuartnelson3@gmail.com>",
            "Martin Conte Mac Donell <martin@lyft.com>"]
 repository = "https://github.com/stuartnelson3/yobot"
